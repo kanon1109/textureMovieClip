@@ -24,12 +24,8 @@ public class TextureMovieClip extends EventDispatcher
 	public function TextureMovieClip(mc:MovieClip, parent:DisplayObjectContainer, fps:Number = 12)
 	{
 		this._fps = fps;
-		
 		var o:Object = this.getMaxSize(mc);
-		trace("o.maxWidth, o.maxHeight", o.maxWidth, o.maxHeight);
-		trace("o.maxLeft, o.maxTop", o.maxLeft, o.maxTop);
 		this.textureVector = this.createTextureVector(mc, o.maxWidth, o.maxHeight, o.maxLeft, o.maxTop);
-		
 		this.starlingMc = new starling.display.MovieClip(this.textureVector, this._fps);
 		parent.addChild(this.starlingMc);
 		Starling.juggler.add(this.starlingMc);

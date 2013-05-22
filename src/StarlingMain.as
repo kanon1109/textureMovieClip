@@ -1,7 +1,11 @@
 package  
 {
 import cn.geckos.display.TextureMovieClip;
+import flash.display.Loader;
+import flash.display.LoaderInfo;
 import flash.display.MovieClip;
+import flash.events.Event;
+import flash.net.URLRequest;
 import starling.display.Sprite;
 /**
  * ...starling主类
@@ -9,11 +13,20 @@ import starling.display.Sprite;
  */
 public class StarlingMain extends Sprite 
 {
-	[Embed(source = "../assets/assets.swf", symbol = "mc")]
-	private var McClass:Class;
 	public function StarlingMain() 
 	{
-		var mc:MovieClip = new McClass();
+		var loader:Loader = new Loader();
+		loader.contentLoaderInfo.addEventListener(Event.COMPLETE, loaderComplete);
+		loader.load(new URLRequest("../assets/assets.swf"));
+	}
+	
+	private function loaderComplete(event:Event):void 
+	{
+		trace("loaderComplete");
+		var contentLoaderInfo:LoaderInfo = event.currentTarget as LoaderInfo;
+		var MyClass:Class = contentLoaderInfo.applicationDomain.getDefinition("mc1") as Class;
+		var mc:MovieClip = new MyClass();
+		
 		var textureMovieClip:TextureMovieClip = new TextureMovieClip(mc, this, 30);
 		textureMovieClip.play();
 	}
