@@ -6,6 +6,7 @@ import flash.geom.Matrix;
 import flash.geom.Rectangle;
 import starling.core.Starling;
 import starling.display.DisplayObjectContainer;
+import starling.events.Event;
 import starling.events.EventDispatcher;
 import starling.textures.Texture;
 /**
@@ -27,8 +28,14 @@ public class TextureMovieClip extends EventDispatcher
 		var o:Object = this.getMaxSize(mc);
 		this.textureVector = this.createTextureVector(mc, o.maxWidth, o.maxHeight, o.maxLeft, o.maxTop);
 		this.starlingMc = new starling.display.MovieClip(this.textureVector, this._fps);
+		this.starlingMc.addEventListener(Event.COMPLETE, completeHandler);
 		parent.addChild(this.starlingMc);
 		Starling.juggler.add(this.starlingMc);
+	}
+	
+	private function completeHandler(event:Event):void 
+	{
+		this.dispatchEvent(event); 
 	}
 	
 	/**
@@ -43,15 +50,13 @@ public class TextureMovieClip extends EventDispatcher
 	private function createTextureVector(mc:MovieClip, width:Number, height:Number, maxLeft:Number, maxTop:Number):Vector.<Texture>
 	{
 		var totalFrames:int = mc.totalFrames;
-		var matrix:Matrix = new Matrix();
+		var matrix:Matrix = new Matrix(1, 0, 0, 1, -maxLeft, -maxTop);
 		var bitmapData:BitmapData;
 		var texture:Texture;
 		var textureVector:Vector.<Texture> = new Vector.<Texture>();
 		for (var i:int = 1; i <= totalFrames; i += 1)
 		{
 			mc.gotoAndStop(i);
-			matrix.tx = -maxLeft;
-			matrix.ty = -maxTop;
 			bitmapData = new BitmapData(width, height, true, 0x000000);
 			bitmapData.draw(mc, matrix);
 			texture = Texture.fromBitmapData(bitmapData, false);
@@ -101,6 +106,25 @@ public class TextureMovieClip extends EventDispatcher
 	}
 	
 	/**
+	 * 销毁自己
+	 */
+	public function destroy():void
+	{
+		if (this.starlingMc)
+		{
+			this.starlingMc.removeEventListener(Event.COMPLETE, completeHandler);
+			this.starlingMc.removeFromParent(true);
+		}
+		this.starlingMc = null;
+		var length:int = this.textureVector.length;
+		for (var i:int = length - 1; i >= 0; i -= 1) 
+		{
+			this.textureVector.splice(i, 1);
+		}
+		this.textureVector = null;
+	}
+	
+	/**
 	 * 播放动画
 	 */
 	public function play():void
@@ -125,15 +149,145 @@ public class TextureMovieClip extends EventDispatcher
 	}
 	
 	/**
+	 * x轴缩放比例
+	 */
+	public function get scaleX():Number { return this.starlingMc.scaleX };
+	public function set scaleX(value:Number):void 
+	{
+		this.starlingMc.scaleX = value;
+	}
+	
+	/**
+	 * y轴缩放比例
+	 */
+	public function get scaleY():Number { return this.starlingMc.scaleY };
+	public function set scaleY(value:Number):void 
+	{
+		this.starlingMc.scaleY = value;
+	}
+	
+	/**
+	 * 透明度
+	 */
+	public function get alpha():Number { return this.starlingMc.alpha };
+	public function set alpha(value:Number):void 
+	{
+		this.starlingMc.alpha = value;
+	}
+	
+	/**
+	 * 是否显示
+	 */
+	public function get visible():Boolean { return this.starlingMc.visible };
+	public function set visible(value:Boolean):void 
+	{
+		this.starlingMc.visible = value;
+	}
+	
+	/**
+	 * 角度
+	 */
+	public function get rotation():Number { return this.starlingMc.rotation };
+	public function set rotation(value:Number):void 
+	{
+		this.starlingMc.rotation = value;
+	}
+	
+	/**
+	 * x轴倾斜比例
+	 */
+	public function get skewX():Number { return this.starlingMc.skewX };
+	public function set skewX(value:Number):void 
+	{
+		this.starlingMc.skewX = value;
+	}
+	
+	/**
+	 * y轴倾斜比例
+	 */
+	public function get skewY():Number { return this.starlingMc.skewY };
+	public function set skewY(value:Number):void 
+	{
+		this.starlingMc.skewY = value;
+	}
+	
+	/**
+	 * 是否可以点击
+	 */
+	public function get touchable():Boolean { return this.starlingMc.touchable };
+	public function set touchable(value:Boolean):void 
+	{
+		this.starlingMc.touchable = value;
+	}
+	
+	/**
 	 * 帧频
 	 */
 	public function get fps():Number { return _fps; };
 	public function set fps(value:Number):void 
 	{
 		_fps = value;
-		if (this.starlingMc)
-			this.starlingMc.fps = fps;
+		this.starlingMc.fps = fps;
+	}
+	
+	/**
+	 * 是否循环播放
+	 */
+	public function get loop():Boolean { return this.starlingMc.loop; };
+	public function set loop(value:Boolean):void 
+	{
+		this.starlingMc.loop = value;
+	}
+	
+	/**
+	 * 是否播放完毕
+	 */
+	public function get isComplete():Boolean 
+	{ 
+		return this.starlingMc.isComplete;
+	}
+	
+	/**
+	 * 是否处于播放中
+	 */
+	public function get isPlaying():Boolean 
+	{ 
+		return this.starlingMc.isPlaying;
+	}
+	
+	/**
+	 * 总帧数
+	 */
+	public function get numFrames():int 
+	{ 
+		return this.starlingMc.numFrames;
+	}
+	
+	/**
+	 * 播放需要花的总时间
+	 */
+	public function get totalTime():Number 
+	{ 
+		return this.starlingMc.totalTime;
 	}
 
+	/**
+	 * 当前帧
+	 */
+	public function get currentFrame():int { return this.starlingMc.currentFrame; }
+	public function set currentFrame(value:int):void
+	{
+		this.starlingMc.currentFrame = value;
+	}
+	
+	/**
+	 * 获取starling的原生影片剪辑
+	 * @return	原生影片剪辑
+	 */
+	public function getNativeMovieClip():starling.display.MovieClip
+	{
+		return this.starlingMc;
+	}
+	
 }
 }
