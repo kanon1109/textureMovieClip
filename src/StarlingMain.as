@@ -6,6 +6,8 @@ import flash.display.LoaderInfo;
 import flash.display.MovieClip;
 import flash.events.Event;
 import flash.net.URLRequest;
+import flash.system.ApplicationDomain;
+import flash.system.LoaderContext;
 import starling.display.Sprite;
 import starling.events.Event
 /**
@@ -16,9 +18,11 @@ public class StarlingMain extends Sprite
 {
 	public function StarlingMain() 
 	{
+		var loaderContext:LoaderContext = new LoaderContext();
+		loaderContext.applicationDomain = new ApplicationDomain();
 		var loader:Loader = new Loader();
 		loader.contentLoaderInfo.addEventListener(flash.events.Event.COMPLETE, loaderComplete);
-		loader.load(new URLRequest("../assets/assets.swf"));
+		loader.load(new URLRequest("../assets/assets.swf"), loaderContext);
 	}
 	
 	private function loaderComplete(event:flash.events.Event):void 
@@ -29,10 +33,8 @@ public class StarlingMain extends Sprite
 		var mc:MovieClip = new MyClass();
 		
 		var textureMovieClip:TextureMovieClip = new TextureMovieClip(mc, this, 30);
-		textureMovieClip.loop = false;
-		textureMovieClip.alpha = .8;
-		textureMovieClip.touchable = true;
 		textureMovieClip.addEventListener(starling.events.Event.COMPLETE, completeHandler);
+		//textureMovieClip.movieClip.alpha = 0.2;
 		textureMovieClip.play();
 	}
 	
