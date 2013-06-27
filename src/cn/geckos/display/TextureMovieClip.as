@@ -29,7 +29,7 @@ public class TextureMovieClip extends EventDispatcher
 		this.textureVector = this.createTextureVector(mc, o.maxWidth, o.maxHeight, o.maxLeft, o.maxTop);
 		this.starlingMc = new starling.display.MovieClip(this.textureVector, this._fps);
 		this.starlingMc.addEventListener(Event.COMPLETE, completeHandler);
-		parent.addChild(this.starlingMc);
+		parent.addChild(this.starlingMc);a
 		Starling.juggler.add(this.starlingMc);
 	}
 	
@@ -112,13 +112,19 @@ public class TextureMovieClip extends EventDispatcher
 	{
 		if (this.starlingMc)
 		{
+			Starling.juggler.remove(this.starlingMc);
 			this.starlingMc.removeEventListener(Event.COMPLETE, completeHandler);
 			this.starlingMc.removeFromParent(true);
+			this.starlingMc.texture.dispose();
+			this.starlingMc.texture = null;
+			this.starlingMc = null;
 		}
-		this.starlingMc = null;
 		var length:int = this.textureVector.length;
+		var bitmapData:BitmapData;
 		for (var i:int = length - 1; i >= 0; i -= 1) 
 		{
+			bitmapData = this.textureVector[i];
+			bitmapData.dispose();
 			this.textureVector.splice(i, 1);
 		}
 		this.textureVector = null;
