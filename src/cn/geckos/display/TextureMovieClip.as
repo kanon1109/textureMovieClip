@@ -29,7 +29,7 @@ public class TextureMovieClip extends EventDispatcher
 		this.textureVector = this.createTextureVector(mc, o.maxWidth, o.maxHeight, o.maxLeft, o.maxTop);
 		this.starlingMc = new starling.display.MovieClip(this.textureVector, this._fps);
 		this.starlingMc.addEventListener(Event.COMPLETE, completeHandler);
-		parent.addChild(this.starlingMc);a
+		parent.addChild(this.starlingMc);
 		Starling.juggler.add(this.starlingMc);
 	}
 	
